@@ -13,6 +13,8 @@ import { TodosService } from './todos.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/get-user.decorator';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { CreateTodoDto } from './dto/createTodo.dto';
+import { UpdateTodoDto } from './dto/updateTodo.dto';
 
 @ApiTags('Todos')
 @ApiBearerAuth()
@@ -22,20 +24,17 @@ export class TodosController {
   constructor(private readonly todosService: TodosService) {}
 
   @Post()
-  createTodo(
-    @CurrentUser() user: { userId: number },
-    @Body() body: { title: string },
-  ) {
-    return this.todosService.create(user.userId, body);
+  create(@CurrentUser() user: { userId: number }, @Body() dto: CreateTodoDto) {
+    return this.todosService.create(user.userId, dto);
   }
 
   @Get()
-  findAllTodos(@CurrentUser() user: { userId: number }) {
+  findAll(@CurrentUser() user: { userId: number }) {
     return this.todosService.findAll(user.userId);
   }
 
   @Get(':id')
-  findOneTodo(
+  findOne(
     @CurrentUser() user: { userId: number },
     @Param('id', ParseIntPipe) id: number,
   ) {
@@ -43,16 +42,16 @@ export class TodosController {
   }
 
   @Patch(':id')
-  updateTodo(
+  update(
     @CurrentUser() user: { userId: number },
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { title: string },
+    @Body() dto: UpdateTodoDto,
   ) {
-    return this.todosService.update(user.userId, id, body);
+    return this.todosService.update(user.userId, id, dto);
   }
 
   @Delete(':id')
-  removeTodo(
+  remove(
     @CurrentUser() user: { userId: number },
     @Param('id', ParseIntPipe) id: number,
   ) {

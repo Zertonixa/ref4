@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateTodoDto } from './dto/createTodo.dto';
+import { UpdateTodoDto } from './dto/updateTodo.dto';
 
 @Injectable()
 export class TodosService {
   constructor(private prisma: PrismaService) {}
 
-  create(userId: number, body: { title: string }) {
+  create(userId: number, body: CreateTodoDto) {
     return this.prisma.todo.create({
       data: {
         title: body.title,
@@ -26,7 +28,7 @@ export class TodosService {
     });
   }
 
-  async update(userId: number, id: number, body: { title: string }) {
+  async update(userId: number, id: number, body: UpdateTodoDto) {
     const todo = await this.findOne(userId, id);
     if (!todo) throw new NotFoundException('Todo not found');
 
